@@ -16,7 +16,7 @@ The **Weather App** is a simple desktop application that provides real-time weat
 
 ## Prerequisites
 
-Before running the Weather App, make sure you have the following installed:
+Before running the **Weather App**, make sure you have the following installed:
 
 - Python 3
 - `ttkbootstrap` library
