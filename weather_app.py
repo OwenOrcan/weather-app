@@ -5,50 +5,62 @@ import requests
 from tkinter import messagebox
 
 
-"""
-The 'WeatherApp' class is the main class implemented for creating a graphical interface for a weather application. This application retrieves weather
-data from an API, and the results are presented in the form of a simple GUI (Graphical User Interface).
+"""The 'WeatherApp' class is the main class implemented for creating a graphical interface for a weather application.
+This application retrieves weather data from an API, and the results are presented in the form of a simple GUI (
+Graphical User Interface).
 
-The class consists of several methods, including:
-- 'get_weather_data': This method retrieves the current weather data from the OpenWeatherMap API for a specified city and parses the JSON response to
-  extract necessary information like weather description, city name, and temperature.
-- 'kelvin_to_celsius_fahrenheit': It converts the temperature value from Kelvin to Celsius and Fahrenheit.
-- '__init__': Initializes the object of WeatherApp class, defines the main application window, and calls the 'load_first_frame' method to start the
-  application with the city input frame.
-- 'load_first_frame': Sets the first frame, which handles the city input and triggers API call and navigation to the second frame on valid input.
-- 'load_second_frame': Displays the results from the API call in a second frame.
-- 'run': Starts the tkinter mainloop to run the application.
+The class consists of several methods, including: - 'get_weather_data': This method retrieves the current weather
+data from the OpenWeatherMap API for a specified city and parses the JSON response to extract necessary information
+like weather description, city name, and temperature. - 'kelvin_to_celsius_fahrenheit': It converts the temperature
+value from Kelvin to Celsius and Fahrenheit. - '__init__': Initializes the object of WeatherApp class, defines the
+main application window, and calls the 'load_first_frame' method to start the application with the city input frame.
+- 'load_first_frame': Sets the first frame, which handles the city input and triggers API call and navigation to the
+second frame on valid input. - 'load_second_frame': Displays the results from the API call in a second frame. -
+'run': Starts the tkinter mainloop to run the application.
 
-Users interact with the application by typing the name of a city into an input field. The application then retrieves weather data for that city and
-displays the information regarding the weather description and temperature in Celsius and Fahrenheit.
-"""
+Users interact with the application by typing the name of a city into an input field. The application then retrieves
+weather data for that city and displays the information regarding the weather description and temperature in Celsius
+and Fahrenheit."""
+
+
+def kelvin_to_celsius_fahrenheit(kelvin: int):
+    # Convert temperature from Kelvin to Celsius and Fahrenheit
+    celsius = kelvin - 273.15
+    fahrenheit = celsius * (9 / 5) + 32
+    return celsius, fahrenheit
+
+
+def get_weather_data(city):
+    # API request to OpenWeatherMap to get weather data
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={city},us&APPID=07b914069d0550579f1980d1c73d8d92"
+    response = requests.get(url).json()
+
+    # Extract relevant information from the API response
+    weather_description = response["weather"][0]["description"]
+    city_name = response["name"]
+    kelvin_temperature = response["main"]["temp"]
+    celsius, fahrenheit = kelvin_to_celsius_fahrenheit(kelvin_temperature)
+    celsius = f"{celsius:.0f}C"
+    fahrenheit = f"{fahrenheit:.0f}F"
+    weather_description = weather_description.title()
+    return city_name, weather_description, fahrenheit, celsius
 
 
 class WeatherApp:
     # Weather API Functions
-    def get_weather_data(self, city):
-        # API request to OpenWeatherMap to get weather data
-        url = f"http://api.openweathermap.org/data/2.5/weather?q={city},us&APPID=07b914069d0550579f1980d1c73d8d92"
-        response = requests.get(url).json()
-
-        # Extract relevant information from the API response
-        weather_description = response["weather"][0]["description"]
-        city_name = response["name"]
-        kelvin_temperature = response["main"]["temp"]
-        celsius, fahrenheit = self.kelvin_to_celsius_fahrenheit(kelvin_temperature)
-        celsius = f"{celsius:.0f}C"
-        fahrenheit = f"{fahrenheit:.0f}F"
-        weather_description = weather_description.title()
-        return (city_name, weather_description, fahrenheit, celsius)
-
-    def kelvin_to_celsius_fahrenheit(self, kelvin: int):
-        # Convert temperature from Kelvin to Celsius and Fahrenheit
-        celsius = kelvin - 273.15
-        fahrenheit = celsius * (9 / 5) + 32
-        return celsius, fahrenheit
 
     def __init__(self):
         # Initialize the main application window
+        self.celsius = None
+        self.fahrenheit = None
+        self.weather_description = None
+        self.cloud_label = None
+        self.tk_cloud_image = None
+        self.cloud_image = None
+        self.temperature_frame = None
+        self.description_frame = None
+        self.main_menu_button = None
+        self.first_frame = None
         self.window = ttk.Window(themename="morph")
         self.window.title("weather-app")
         self.window.geometry("600x400")
@@ -84,7 +96,7 @@ class WeatherApp:
                 if not City:
                     messagebox.showerror(title="Invalid City", message="The City You Are Trying To Search Is Invalid")
                 else:
-                    self.city_name, self.weather_description, self.fahrenheit, self.celsius = self.get_weather_data(
+                    self.city_name, self.weather_description, self.fahrenheit, self.celsius = get_weather_data(
                         City)
                     self.first_frame.place_forget()
                     self.title_var.set(f"{City.title()} Weather")
