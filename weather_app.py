@@ -4,23 +4,16 @@ import tkinter as tk
 import requests
 from tkinter import messagebox
 
-
-"""The 'WeatherApp' class is the main class implemented for creating a graphical interface for a weather application.
-This application retrieves weather data from an API, and the results are presented in the form of a simple GUI (
-Graphical User Interface).
-
-The class consists of several methods, including: - 'get_weather_data': This method retrieves the current weather
-data from the OpenWeatherMap API for a specified city and parses the JSON response to extract necessary information
-like weather description, city name, and temperature. - 'kelvin_to_celsius_fahrenheit': It converts the temperature
-value from Kelvin to Celsius and Fahrenheit. - '__init__': Initializes the object of WeatherApp class, defines the
-main application window, and calls the 'load_first_frame' method to start the application with the city input frame.
-- 'load_first_frame': Sets the first frame, which handles the city input and triggers API call and navigation to the
-second frame on valid input. - 'load_second_frame': Displays the results from the API call in a second frame. -
-'run': Starts the tkinter mainloop to run the application.
-
-Users interact with the application by typing the name of a city into an input field. The application then retrieves
-weather data for that city and displays the information regarding the weather description and temperature in Celsius
-and Fahrenheit."""
+"""
+kelvin_to_celsius_fahrenheit function
+This function takes in one argument:
+    - kelvin (int) : Temperature in Kelvin
+The function performs conversions from Kelvin to both Celsius and Fahrenheit scales.
+Returns:
+    - celsius (float) : Temperature converted to Celsius.
+    - fahrenheit (float) : Temperature converted to Fahrenheit.
+Returns a tuple (celsius, fahrenheit)
+"""
 
 
 def kelvin_to_celsius_fahrenheit(kelvin: int):
@@ -30,6 +23,27 @@ def kelvin_to_celsius_fahrenheit(kelvin: int):
     return celsius, fahrenheit
 
 
+"""
+get_weather_data
+
+This function queries weather data for a given city from the OpenWeatherMap API. It parses the response and returns a
+tuple with a set of weather information.
+
+Parameters: city (str): The name of the city for which the weather data is to be retrieved. The format should be such
+that it can be directly inserted into the API query.
+
+Returns: Tuple: A tuple containing the city name, a description string of the weather, the temperature in Fahrenheit,
+and the temperature in Celsius. The latter two are formatted as strings with the temperature degree and the
+respective scale as value, i.e., "<value>C" or "<value>F". The weather_description is capitalized.
+
+"""
+
+
+# This function creates and sends a GET request to the OpenWeatherMap API, retrieves weather data for the provided
+# city in JSON format. It extracts the weather description, the city name, and the temperature in Kelvin from the
+# JSON response. The temperature in Kelvin is then converted to Celsius and Fahrenheit using the
+# `kelvin_to_celsius_fahrenheit` function (Defined above). Lastly, the function returns a tuple with the city name,
+# description of the weather, temperature in Fahrenheit and temperature in Celsius.
 def get_weather_data(city):
     # API request to OpenWeatherMap to get weather data
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city},us&APPID=07b914069d0550579f1980d1c73d8d92"
@@ -44,6 +58,38 @@ def get_weather_data(city):
     fahrenheit = f"{fahrenheit:.0f}F"
     weather_description = weather_description.title()
     return city_name, weather_description, fahrenheit, celsius
+
+
+# WeatherApp Class
+"""
+Main class of the Weather Application GUI in Python.
+
+This class is responsible for the creation, management, and functions of the GUI of the python weather application.
+It uses the tkinter and ttkbootstrap libraries for the visualization of the app and to take user inputs.
+It also uses the Pillow library for handling images in the application.
+
+This class follows the principles of object-oriented programming. It contains methods to load various frames that
+show weather information. It has a method to initialize the application's window as well as a method to kickstart
+the main application loop where the GUI starts functioning.
+
+Attributes:
+    celsius: A variable to store the weather temperature in Celsius.
+    fahrenheit: A variable to store the weather temperature in Fahrenheit.
+    weather_description: A string to store the description of the weather.
+    cloud_label: Label object to display an image of a cloud in the GUI.
+    tk_cloud_image: TKImage object of a cloud.
+    cloud_image: Image object of a cloud.
+    temperature_frame: Frame object to display temperature information.
+    description_frame: Frame object to display weather description.
+    main_menu_button: Button object to navigate to the main menu of the application.
+    first_frame: Frame object to take city input from the user and display weather data.
+    window: Main application window where all frames, labels, and buttons are placed and displayed.
+    title_var: Variable to store the title name.
+    title: Label object to display title.
+    logo: Image object of the application logo.
+    tklogo: TKImage object of the application logo.
+    logolabel: Label object to display the logo on the main window.
+"""
 
 
 class WeatherApp:
@@ -85,11 +131,31 @@ class WeatherApp:
         self.load_first_frame()
 
     # City Input Frame
+    """load_first_frame is a method of the WeatherApp class. It is responsible for creating the initial layout of the
+    application, specifically the frame used for the city input search functionality. It defines functions that
+    handle various events such as clicking on the search button, entering a city name, and pressing ENTER to trigger
+    the search button event. The function also sets design properties such as background color and placement in the
+    initial frame."""
+
     def load_first_frame(self):
         # Create the first frame for city input
         self.first_frame = tk.Frame(master=self.window)
 
         # Search Button Function
+        """Function search_button_func is responsible for the logic behind the search button in the application. This
+        function tries to get the input from city_entry_var which is assumed to be the name of a city. If the
+        city_entry_var is empty (no input was given), it shows an error message stating "The City You Are Trying To
+        Search Is Invalid".
+
+        If a valid city name is present, it calls the function get_weather_data and assigns its return value to class
+        variables city_name, weather_description, fahrenheit, and celsius.
+
+        After that, it updates the title_var, hides the first_frame, and loads the second frame via the function
+        load_second_frame. If the function completes successfully, it returns True.
+
+        In the case of an exception (for example, if the city provided does not exist or the API fails to fetch
+        weather data), it shows the same error message as before and returns False."""
+
         def search_button_func():
             try:
                 City = city_entry_var.get()
@@ -116,6 +182,10 @@ class WeatherApp:
         search_button = ttk.Button(master=self.first_frame, text="Search", command=search_button_func)
 
         # Pressing ENTER triggers the button event
+        """The 'trigger' function acts as an event handler when keys are pressed in the 'city_entry' text field. If
+        the 'Return' key is pressed, it calls the 'search_button_func' function, triggering the search for the
+        entered city's weather data."""
+
         def trigger(event):
             if event.keysym == "Return":
                 search_button_func()
@@ -126,16 +196,51 @@ class WeatherApp:
         self.first_frame.configure(background="lightblue")
         self.first_frame.place(x=190, y=150)
 
-        # Entry Delete Event
+        # Entry Delete Event The 'on_entry_click' function is a callback event bound to the 'FocusIn' event of the
+        # city input field within the 'load_first_frame' function. Its main role is to check if the current value of
+        # the city input field is equal to the default text 'Enter City...'. If it is, this implies the field hasn't
+        # been edited yet by the user. As a response to the focus event (i.e., when the user clicks the field to type
+        # in a city name), 'on_entry_click' clears the default text, preparing the field for the user's input.
+
         def on_entry_click(entry_var):
             # Check if the current value is equal to the placeholder text
             if entry_var.get() == "Enter City...":
                 # Delete the current text
                 entry_var.set("")
 
-    # Second Frame (info about the given city)
+    """
+    load_second_frame Function
+
+    This is a method of the WeatherApp class. This function is responsible for loading the second frame in the
+    application's user interface (UI). This frame displays weather information as well as a main menu button.
+
+    The method generates and configures several GUI elements including:
+        - Main Menu Button: Allows user to navigate back to the main menu.
+        - Description frame: Displays the weather description.
+        - Temperature frame: Shows information about the temperature in Celsius and Fahrenheit.
+        - Cloud Label: Presents a cloud image.
+
+    The main menu button and each frame are placed at specific coordinates on the application's window. After the
+    creation of each GUI element, the widget's attributes (like background color, font, text, etc.) are set according
+    to the requirements.
+
+    This method does not take any parameters or return any values.
+    """
+
     def load_second_frame(self):
-        # Main Menu Button
+        """
+        main_menu_button_func Method
+
+        This is a method within the load_second_frame function that is part of the WeatherApp class. It is
+        responsible for the functionality of the main menu button that appears on the weather information display.
+        When this button is clicked, it hides the current weather information frames (temperature frame, description
+        frame, cloud image), resets the title of the application to its default state, and loads the first frame (
+        which allows for city input). This effectively returns the user to the main menu.
+
+        This method does not accept any parameters nor does it return any values. The actions are performed within
+        the function itself.
+        """
+
         def main_menu_button_func():
             # Go back to the main menu, hiding the current information frames
             self.description_frame.place_forget()
