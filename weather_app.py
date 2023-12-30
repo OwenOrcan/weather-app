@@ -5,6 +5,25 @@ import requests
 from tkinter import messagebox
 
 
+"""
+The 'WeatherApp' class is the main class implemented for creating a graphical interface for a weather application. This application retrieves weather
+data from an API, and the results are presented in the form of a simple GUI (Graphical User Interface).
+
+The class consists of several methods, including:
+- 'get_weather_data': This method retrieves the current weather data from the OpenWeatherMap API for a specified city and parses the JSON response to
+  extract necessary information like weather description, city name, and temperature.
+- 'kelvin_to_celsius_fahrenheit': It converts the temperature value from Kelvin to Celsius and Fahrenheit.
+- '__init__': Initializes the object of WeatherApp class, defines the main application window, and calls the 'load_first_frame' method to start the
+  application with the city input frame.
+- 'load_first_frame': Sets the first frame, which handles the city input and triggers API call and navigation to the second frame on valid input.
+- 'load_second_frame': Displays the results from the API call in a second frame.
+- 'run': Starts the tkinter mainloop to run the application.
+
+Users interact with the application by typing the name of a city into an input field. The application then retrieves weather data for that city and
+displays the information regarding the weather description and temperature in Celsius and Fahrenheit.
+"""
+
+
 class WeatherApp:
     # Weather API Functions
     def get_weather_data(self, city):
