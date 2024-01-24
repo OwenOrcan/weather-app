@@ -54,3 +54,4 @@ If you want to contribute to the project, feel free to submit issues or pull req
 This project is licensed under the [MIT LICENSE](https://github.com/OwenOrcan/weather-app?tab=MIT-1-ov-file)
 
 
+
